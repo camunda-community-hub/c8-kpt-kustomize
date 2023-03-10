@@ -121,5 +121,5 @@ The same considerations should be made for elasticsearch and zeebe. Both are can
 | Identity | https://camunda.example.com/identity/ |
 | Kibana   | https://kibana.example.com/ |
 | Vault    | https://vault.example.com/ |
-| Kafka    | https://kafka.example.com/ |
+| Kafka    | kafka.example.com:80 |
 | Showroom | https://camunda.example.com/camunda |
