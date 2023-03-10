@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-identity
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: identity
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: identity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: identity
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: identity
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: identity
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: identity
+    spec:
+      serviceAccountName: camunda-identity
+      initContainers:
+        - command:
+            - sh
+            - -c
+            - cp -a /app/keycloak-theme/* /mnt
+          image: 'camunda/identity:8.1.5'
+          imagePullPolicy: 'IfNotPresent'
+          name: copy-camunda-theme
+          volumeMounts:
+            - mountPath: /mnt
+              name: camunda-theme
+      containers:
+        - name: identity
+          image: camunda/identity:8.1.8
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: identity-env-vars
+          env:
+            - name: KEYCLOAK_CLIENTS_0_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: camunda-connectors
+                  key: client-secret
+            - name: KEYCLOAK_INIT_OPERATE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: "camunda-operate-identity-secret"
+                  key: operate-secret
+            - name: KEYCLOAK_INIT_TASKLIST_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: "camunda-tasklist-identity-secret"
+                  key: tasklist-secret
+            - name: KEYCLOAK_INIT_OPTIMIZE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: "camunda-optimize-identity-secret"
+                  key: optimize-secret
+            - name: KEYCLOAK_SETUP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: camunda-keycloak
+                  key: admin-password
+          resources: {}
+          ports:
+            - containerPort: 8080
+              name: http-clients
+              protocol: TCP
+            - containerPort: 8082
+              name: http-metrics
+              protocol: TCP
+              # volumeMounts:
+              #   - name: keystore
+              #     mountPath: /etc/ssl/camunda
+      volumes:
+        - emptyDir:
+            sizeLimit: 10Mi
+          name: camunda-theme
+          # - name: keystore
+          #   configMap:
+          #     name: trust-store-jks
+      # - name: keystore
+      #   configMap:
+      #     name: trust-store-jks

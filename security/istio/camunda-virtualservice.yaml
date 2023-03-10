@@ -1,0 +1,103 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: camunda8-server
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'networking.istio.io|VirtualService|default|camunda8-server'
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: camunda8-server
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: VirtualService
+spec:
+  exportTo:
+    - '*'
+  gateways:
+    - 'helix-ingress-gateway-internal-camunda/internal-camunda' # kpt-set: ${camunda-ingress-gateway-namespace}/${camunda-ingress-gateway-name}
+  hosts:
+    - 'camunda.example.com' # kpt-set: camunda.${camunda-domain}
+  http:
+    - name: camunda-keycloak
+      match:
+        - uri:
+            prefix: "/auth"
+          port: 443
+      route:
+        - destination:
+            host: camunda-keycloak
+            port:
+              number: 80
+    - name: camunda-identity
+      match:
+        - uri:
+            prefix: "/identity"
+          port: 443
+      route:
+        - destination:
+            host: camunda-identity
+            port:
+              number: 80
+    - name: camunda-operate
+      match:
+        - uri:
+            prefix: "/operate"
+          port: 443
+      route:
+        - destination:
+            host: camunda-operate
+            port:
+              number: 80
+    - name: camunda-optimize
+      match:
+        - uri:
+            prefix: "/optimize"
+          port: 443
+      route:
+        - destination:
+            host: camunda-optimize
+            port:
+              number: 80
+    - name: camunda-tasklist
+      match:
+        - uri:
+            prefix: "/tasklist"
+          port: 443
+      route:
+        - destination:
+            host: camunda-tasklist
+            port:
+              number: 80
+    - name: camunda-connectors
+      match:
+        - port: 443
+          uri:
+            prefix: /connectors/
+      rewrite:
+        uri: /
+      route:
+        - destination:
+            host: camunda-connectors
+            port:
+              number: 80
+    - name: camunda-showroom
+      match:
+        - port: 443
+          uri:
+            prefix: /camunda
+      route:
+        - destination:
+            host: customer-onboarding
+            port:
+              number: 8080
+    - name: minisite
+      match:
+        - port: 443
+          uri:
+            prefix: /
+      route:
+        - destination:
+            host: minisite
+            port:
+              number: 8080

@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: kafka-server
+  annotations:
+    internal.kpt.dev/upstream-identifier: "networking.istio.io|VirtualService|default|kibana-server"
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: kafka-server
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: VirtualService
+spec:
+  exportTo:
+    - '*'
+  gateways:
+    - 'helix-ingress-gateway-internal-camunda/internal-camunda' # kpt-set: ${camunda-ingress-gateway-namespace}/${camunda-ingress-gateway-name}
+  hosts:
+    - '*'
+  tcp:
+    - match:
+        - port: 80
+      route:
+        - destination:
+            host: kafka.camunda8-dev.svc.cluster.local
+            port:
+              number: 9092

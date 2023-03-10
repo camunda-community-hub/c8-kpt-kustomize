@@ -1,0 +1,49 @@
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: external-svc-https
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: external-svc-https
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: ServiceEntry
+spec:
+  hosts:
+  - niceneasyitgmbh.webhook.office.com
+  - niceneasyitgmbh932.webhook.office.com
+  - geoip.elastic.co
+  location: MESH_EXTERNAL
+  ports:
+  - number: 443
+    name: https
+    protocol: TLS
+  resolution: DNS
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: internal-svc-https
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: external-svc-https
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: ServiceEntry
+spec:
+  hosts:
+  - camunda.example.com # kpt-set: camunda.${camunda-domain}
+  - zeebe.camunda.example.com # kpt-set: zeebe.camunda.${camunda-domain}
+  - webmodeler.example.com # kpt-set: webmodeler.${camunda-domain}
+  - webmodeler-api.example.com # kpt-set: webmodeler-api.${camunda-domain}
+  - webmodeler-ws.example.com # kpt-set: webmodeler-ws.${camunda-domain}
+  - kibana.example.com # kpt-set: kibana.${camunda-domain}
+  - vault.example.com # kpt-set: vault.${camunda-domain} 
+  location: MESH_INTERNAL
+  ports:
+  - number: 443
+    name: https
+    protocol: TLS
+  resolution: DNS

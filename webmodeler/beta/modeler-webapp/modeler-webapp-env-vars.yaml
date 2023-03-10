@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: modeler-webapp-env-vars
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-webapp
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: modeler-webapp
+data:
+  CLIENT_PUSHER_FORCE_TLS: "true"
+  CLIENT_PUSHER_HOST: webmodeler-ws.example.com # kpt-set: webmodeler-ws.${camunda-domain}
+  CLIENT_PUSHER_PORT: "443"
+  IDENTITY_BASE_URL: https://camunda.example.com/identity # kpt-set: https://camunda.${camunda-domain}/identity
+  KEYCLOAK_BASE_URL: https://camunda.example.com # kpt-set: https://${keycloak-domain}
+  KEYCLOAK_JWKS_URL: https://camunda.example.com/auth/realms/camunda-platform/protocol/openid-connect/certs # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/protocol/openid-connect/certs
+  KEYCLOAK_REALM: camunda-platform
+  #NODE_DEBUG: http,https,http2,grcp,webpack,pusher-js-aut,zeebe-node,pusher-js,pusher,node,server.js
+  #GRPC_VERBOSITY: DEBUG 
+  #GRPC_TRACE: all
+  NODE_EXTRA_CA_CERTS: /var/run/tls/ca.crt
+  OAUTH2_CLIENT_ID: web-modeler
+  OAUTH2_TOKEN_AUDIENCE: web-modeler
+  OAUTH2_TOKEN_ISSUER: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+  PUSHER_APP_ID: modeler-app
+  PUSHER_HOST: modeler-websockets
+  PUSHER_PORT: "8060"
+  RESTAPI_PORT: "8085"
+  RESTAPI_HOST: modeler-restapi
+  REST_MANAGEMENT_API_URL: http://modeler-restapi:8086
+  SERVER_URL: https://webmodeler.example.com # kpt-set: https://webmodeler.${camunda-domain}
+  ZEEBE_CA_CERTIFICATE_PATH: /var/run/ssl/trusted.crt
+  ZEEBE_CLIENT_SSL_CERT_CHAIN_PATH: /var/run/ssl/trusted-chain.crt
+  ZEEBE_CLIENT_SSL_PRIVATE_KEY_PATH: /var/run/tls/tls.key
+  ZEEBE_CLIENT_SSL_ROOT_CERTS_PATH: /var/run/ssl/trusted.crt
+  ZEEBE_NODE_LOG_LEVEL: DEBUG
+  ZEEBE_SECURE_CONNECTION: "true"
+  SWAGGER_UI_ENABLED: "true"
+  #TZ: Europe/Zurich
+  NODE_TLS_REJECT_UNAUTHORIZED: "0"

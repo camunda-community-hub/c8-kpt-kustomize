@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: camunda-zeebe
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: zeebe
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: zeebe-broker
+data:
+  broker-log4j2.xml: |-
+    <?xml version="1.0" encoding="UTF-8"?>
+    <Configuration status="WARN" shutdownHook="disable">
+
+      <Properties>
+        <Property name="log.path">${sys:app.home}/logs</Property>
+        <Property name="log.pattern">%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{actor-name}] [%t] %-5level
+          %logger{36} - %msg%n
+        </Property>
+        <Property name="log.stackdriver.serviceName">${env:ZEEBE_LOG_STACKDRIVER_SERVICENAME:-}
+        </Property>
+        <Property name="log.stackdriver.serviceVersion">${env:ZEEBE_LOG_STACKDRIVER_SERVICEVERSION:-}
+        </Property>
+      </Properties>
+
+      <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+          <PatternLayout
+            pattern="${log.pattern}"/>
+        </Console>
+
+        <Console name="Stackdriver" target="SYSTEM_OUT">
+          <StackdriverLayout serviceName="${log.stackdriver.serviceName}"
+            serviceVersion="${log.stackdriver.serviceVersion}"/>
+        </Console>
+
+        <RollingFile name="RollingFile" fileName="${log.path}/zeebe.log"
+          filePattern="${log.path}/zeebe-%d{yyyy-MM-dd}-%i.log.gz">
+          <PatternLayout>
+            <Pattern>${log.pattern}</Pattern>
+          </PatternLayout>
+          <Policies>
+            <TimeBasedTriggeringPolicy/>
+            <SizeBasedTriggeringPolicy size="250 MB"/>
+          </Policies>
+        </RollingFile>
+      </Appenders>
+
+      <Loggers>
+        <Logger name="io.camunda.zeebe" level="${env:ZEEBE_LOG_LEVEL:-info}"/>
+        <Logger name="io.atomix" level="${env:ATOMIX_LOG_LEVEL:-info}"/>
+
+        <Root level="info">
+          <AppenderRef ref="RollingFile"/>
+
+          <!-- remove to disable console logging -->
+          <AppenderRef ref="${env:ZEEBE_LOG_APPENDER:-Console}"/>
+        </Root>
+      </Loggers>
+
+    </Configuration>
+  startup.sh: |
+    #!/usr/bin/env bash
+    set -eux -o pipefail
+
+    export ZEEBE_BROKER_CLUSTER_NODEID=${ZEEBE_BROKER_CLUSTER_NODEID:-${K8S_NAME##*-}}
+
+    if [ "$(ls -A /exporters/)" ]; then
+      mkdir /usr/local/zeebe/exporters/
+      cp -a /exporters/*.jar /usr/local/zeebe/exporters/
+    else
+      echo "No exporters available."
+    fi
+
+    env
+    exec /usr/local/zeebe/bin/broker

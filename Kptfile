@@ -1,0 +1,66 @@
+apiVersion: kpt.dev/v1
+kind: Kptfile
+metadata:
+  name: camunda-platform-8
+upstream:
+  type: git
+  git:
+    repo: https://github.com/camunda-community-hub/c8-kpt-kustomize.git
+    directory: /
+    ref: master
+  updateStrategy: resource-merge
+upstreamLock:
+  type: git
+  git:
+    repo: https://github.com/camunda-community-hub/c8-kpt-kustomize.git
+    directory: /
+    ref: master
+info:
+  site: https://github.com/camunda-community-hub/c8-kpt-kustomize
+  emails:
+    - owner@example.com
+  license: MPL-2.0
+  licenseFile: LICENSE
+  description: Camunda Platform 8 Package
+  keywords:
+    - camunda
+    - zeebe
+  man: https://github.com/camunda-community-hub/c8-kpt-kustomize
+pipeline:
+  mutators:
+    - image: gcr.io/kpt-fn/apply-setters:v0.2
+      configMap:
+        registry-secret: regcred.yaml
+        camunda-app-version: 1.0.0
+        camunda-app-name: camunda-platform
+        camunda-domain: example.com
+        camunda-ingress-gateway-namespace: helix-ingress-gateway-internal-camunda
+        camunda-ingress-gateway-name: internal-camunda
+        jwks: '{"keys":[{"kid":"I_yCf.....}'
+        keycloak-deployment-type: internal-keycloak
+        keycloak-domain: camunda.example.com
+        keycloak-backend: http://camunda-keycloak
+        keycloak-postgresql-deployment-type: internal-postgresql
+        keycloak-postgresql-url: jdbc:postgresql://camunda-postgresql:5432/bitnami_keycloak?currentSchema=public
+        keycloak-postgresql-user: bn_keycloak
+        elasticsearch-deployment-type: internal-elasticsearch
+        kibana-deployment-type: internal-kibana
+        zeebe-deployment-type: internal-zeebe
+        elasticsearch-url: http://elasticsearch-master:9200
+        webmodeler-deployment-type: beta
+        webmodeler-postgresql-deployment-type: internal-postgresql
+        webmodeler-postgresql-url: jdbc:postgresql://modeler-db:5432/modeler-db
+        webmodeler-postgresql-user: modeler-db-user
+        webmodeler-mailhog-deployment-type: on
+        vault-deployment-type: internal-vault
+        kafka-deployment-type: internal-kafka
+        #        external urls:
+        #        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-keycloak
+        #        keycloak-postgresql-user: camunda8-keycloak
+        #        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-webmodeler
+        #        webmodeler-postgresql-user: modeler-db-user
+#        external urls:
+#        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-keycloak
+#        keycloak-postgresql-user: camunda8-keycloak
+#        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-webmodeler
+#        webmodeler-postgresql-user: modeler-db-user

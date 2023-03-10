@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: kibana-server
+  annotations:
+    internal.kpt.dev/upstream-identifier: "networking.istio.io|VirtualService|default|kibana-server"
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: kibana-server
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: VirtualService
+spec:
+  exportTo:
+    - '*'
+  gateways:
+    - 'helix-ingress-gateway-internal-camunda/internal-camunda' # kpt-set: ${camunda-ingress-gateway-namespace}/${camunda-ingress-gateway-name}
+  hosts:
+    - 'kibana.example.com' # kpt-set: kibana.${camunda-domain}
+  http:
+    - name: kibana
+      match:
+        - port: 443
+      route:
+        - destination:
+            host: kibana
+            port:
+              number: 5601

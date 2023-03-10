@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hashicorp-vault-agent-injector-svc
+  labels:
+    app.kubernetes.io/name: vault-agent-injector
+    app.kubernetes.io/instance: hashicorp-vault
+    app.kubernetes.io/managed-by: Helm
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: vault-agent-injector
+    app.kubernetes.io/instance: hashicorp-vault
+    component: webhook

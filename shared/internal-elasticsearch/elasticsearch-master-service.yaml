@@ -1,0 +1,28 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: elasticsearch-master
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: elasticsearch-master
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: elasticsearch-master
+spec:
+  type: ClusterIP
+  selector:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: elasticsearch-master
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: elasticsearch-master
+  publishNotReadyAddresses: false
+  ports:
+  - name: http-clients
+    protocol: TCP
+    port: 9200
+  - name: tcp-transport
+    protocol: TCP
+    port: 9300

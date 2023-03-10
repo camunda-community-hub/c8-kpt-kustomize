@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.26.0 (40646f47)
+  labels:
+    io.kompose.service: customer-onboarding
+  name: customer-onboarding
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: customer-onboarding
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.26.0 (40646f47)
+      labels:
+        io.kompose.service: customer-onboarding
+    spec:
+      serviceAccountName: customer-onboarding
+      containers:
+        - name: customer-onboarding
+          image: camunda-docker-local.bin.swisscom.com/camunda/showroom-customer-onboarding:1.0.0
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: customer-onboarding-env-vars
+          ports:
+            - containerPort: 8080
+          resources: {}
+          volumeMounts:
+            - name: config
+              mountPath: /config/application.properties
+              subPath: application.properties
+            - name: keystore
+              mountPath: /etc/ssl/camunda
+            - name: tls-store
+              mountPath: /var/run/tls
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: customer-onboarding-cm
+            defaultMode: 484
+        - name: keystore
+          configMap:
+            name: trust-store-jks
+        - name: tls-store
+          secret:
+            secretName: internal-camunda-gateway-credential

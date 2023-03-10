@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kibana
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: kibana
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: kibana
+spec:
+  replicas: 1
+  serviceName: camunda-kibana
+  updateStrategy:
+    rollingUpdate: {}
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: kibana
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: kibana
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: kibana
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: kibana
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: kibana
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:7.17.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5601
+              name: http-clients
+          envFrom:
+            - configMapRef:
+                name: kibana-env-vars
+          resources: {}
+          volumeMounts:
+            - mountPath: /usr/share/kibana/data
+              name: kibana-data
+              readOnly: false
+  volumeClaimTemplates:
+    - metadata:
+        name: kibana-data
+        labels:
+          app: camunda-platform # kpt-set: ${camunda-app-name}
+          app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+          app.kubernetes.io/name: kibana-data
+          app.kubernetes.io/instance: camunda
+          app.kubernetes.io/part-of: camunda-platform
+          app.kubernetes.io/component: kibana
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources:
+          requests:
+            storage: 100Mi

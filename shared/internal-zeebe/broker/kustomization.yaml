@@ -1,0 +1,6 @@
+resources:
+- zeebe-broker-service.yaml
+- zeebe-broker-service-account.yaml
+- zeebe-broker-statefulset.yaml
+- zeebe-broker-configmap.yaml
+- zeebe-broker-env-vars.yaml

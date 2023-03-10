@@ -1,0 +1,13 @@
+kind: Kustomization
+metadata: # kpt-merge: /kustomization
+  name: kustomization
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+    internal.kpt.dev/upstream-identifier: 'kustomize.config.k8s.io|Kustomization|default|kustomization'
+resources:
+- internal-keycloak # kpt-set: ${keycloak-deployment-type}
+- internal-elasticsearch # kpt-set: ${elasticsearch-deployment-type}
+- internal-zeebe # kpt-set: ${zeebe-deployment-type}
+- internal-kibana # kpt-set: ${kibana-deployment-type}
+- internal-vault # kpt-set: ${vault-deployment-type}
+- internal-kafka # kpt-set: ${kafka-deployment-type}

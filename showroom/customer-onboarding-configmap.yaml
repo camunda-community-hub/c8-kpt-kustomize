@@ -1,0 +1,21 @@
+kind: ConfigMap
+metadata:
+  name: customer-onboarding-cm
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: customer-onboarding-cm
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: customer-onboarding-cm
+apiVersion: v1
+data:
+  application.properties: |
+    server.port=8080
+    server.servlet.context-path: /camunda
+    spring.kafka.bootstrap-servers=camunda-zeebe-gateway:26500
+    logging.level.root=INFO
+    zeebe.client.broker.gateway-address=zeebe.example.com:443
+    zeebe.client.security.plaintext=true
+    zeebe.client.cloud.baseUrl=zeebe.example.com:443
+    zeebe.client.cloud.authUrl=https://camunda.example.com/auth/realms/camunda-platform/protocol/openid-connect/token

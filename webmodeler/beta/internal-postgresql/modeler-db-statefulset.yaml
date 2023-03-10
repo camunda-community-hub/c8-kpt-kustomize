@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: modeler-db
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-db
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: modeler-db
+spec:
+  replicas: 1
+  serviceName: camunda-webmodeler-postgresql-hl
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: modeler-db
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: modeler-db
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: modeler-db
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: modeler-db
+    spec:
+      serviceAccountName: camunda-modeler-db
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: modeler-db
+          image: postgres:14.5-alpine
+          env:
+            - name: POSTGRES_DB
+              value: modeler-db
+            - name: POSTGRES_PASSWORD
+              value: modeler-db-password
+            - name: POSTGRES_USER
+              value: modeler-db-user
+          securityContext:
+            runAsUser: 0
+          ports:
+            - containerPort: 5432
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 600m
+              memory: 1Gi
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+            - name: modeler-db-data
+              mountPath: /var/lib/postgresql
+      restartPolicy: Always
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+  volumeClaimTemplates:
+    - metadata:
+        name: modeler-db-data
+        labels:
+          app: camunda-platform
+          app.kubernetes.io/name: modeler-db
+          app.kubernetes.io/instance: camunda
+          app.kubernetes.io/part-of: camunda-platform
+          app.kubernetes.io/version: "14.5"
+          app.kubernetes.io/component: modeler-db
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"

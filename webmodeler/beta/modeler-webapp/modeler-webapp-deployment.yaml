@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modeler-webapp
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-webapp
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: modeler-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: modeler-webapp
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: modeler-webapp
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: modeler-webapp
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: modeler-webapp
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: camunda-modeler-webapp
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      containers:
+        - envFrom:
+            - configMapRef:
+                name: modeler-webapp-env-vars
+          env:
+            - name: SERVER_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: PUSHER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi-pusher
+                  key: key
+            - name: PUSHER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi-pusher
+                  key: secret
+            - name: CLIENT_PUSHER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi-pusher-client
+                  key: key
+            - name: CLIENT_PUSHER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi-pusher-client
+                  key: secret
+          image: registry.camunda.cloud/web-modeler-ee/modeler-webapp:0.6.0-beta
+          name: modeler-webapp
+          ports:
+            - containerPort: 8070
+          volumeMounts:
+            - name: keystore
+              mountPath: /var/run/ssl
+              readOnly: true
+            - name: tls-store
+              mountPath: /var/run/tls
+              readOnly: true
+          resources: {}
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+      restartPolicy: Always
+      volumes:
+        - name: keystore
+          configMap:
+            name: trusted-cas
+        - name: tls-store
+          secret:
+            secretName: internal-camunda-gateway-credential

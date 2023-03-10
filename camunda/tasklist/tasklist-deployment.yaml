@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-tasklist
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: tasklist
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: tasklist
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: tasklist
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: tasklist
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: tasklist
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: tasklist
+    spec:
+      serviceAccountName: camunda-tasklist
+      containers:
+      - name: tasklist
+        image: camunda/tasklist:8.1.8
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: tasklist-env-vars
+        env:
+        - name: CAMUNDA_TASKLIST_IDENTITY_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: "camunda-tasklist-identity-secret"
+              key: tasklist-secret
+        resources: {}
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP

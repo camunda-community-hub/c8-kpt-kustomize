@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: identity-env-vars
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: identity
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: identity
+data:
+  IDENTITY_RETRY_DELAY_SECONDS: "30"
+  IDENTITY_AUTH_PROVIDER_BACKEND_URL: http://camunda-keycloak/auth/realms/camunda-platform # kpt-set: ${keycloak-backend}/auth/realms/camunda-platform
+  IDENTITY_AUTH_PROVIDER_ISSUER_URL: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+  IDENTITY_BASE_PATH: /identity
+  IDENTITY_URL: https://camunda.example.com/identity # kpt-set: https://camunda.${camunda-domain}/identity
+  #JDK_JAVA_OPTIONS: -Dlogging.level.root=trace -Djdk.httpclient.HttpClient.log=info  -Djavax.net.ssl.trustStore=/etc/ssl/camunda/trust-store.jks -Djavax.net.ssl.trustStorePassword=demodemo
+  KEYCLOAK_INIT_OPERATE_ROOT_URL: https://camunda.example.com/operate # kpt-set: https://camunda.${camunda-domain}/operate
+  KEYCLOAK_INIT_OPTIMIZE_ROOT_URL: https://camunda.example.com/optimize # kpt-set: https://camunda.${camunda-domain}/optimize
+  KEYCLOAK_INIT_TASKLIST_ROOT_URL: https://camunda.example.com/tasklist # kpt-set: https://camunda.${camunda-domain}/tasklist
+  KEYCLOAK_INIT_WEBMODELER_ROOT_URL: https://webmodeler.example.com # kpt-set: https://webmodeler.${camunda-domain}
+  KEYCLOAK_SETUP_USER: admin
+  KEYCLOAK_URL: http://camunda-keycloak/auth # kpt-set: ${keycloak-backend}/auth
+  KEYCLOAK_USERS_0_PASSWORD: demo
+  KEYCLOAK_USERS_0_ROLES_0: Identity
+  KEYCLOAK_USERS_0_ROLES_1: Operate
+  KEYCLOAK_USERS_0_ROLES_2: Tasklist
+  KEYCLOAK_USERS_0_ROLES_3: Optimize
+  KEYCLOAK_USERS_0_ROLES_4: Web Modeler
+  KEYCLOAK_USERS_0_USERNAME: demo
+  SERVER_PORT: "8080"
+  KEYCLOAK_CLIENTS_0_ID: connectors
+  KEYCLOAK_CLIENTS_0_NAME: Connectors
+  KEYCLOAK_CLIENTS_0_PERMISSIONS_0_DEFINITION: read:*
+  KEYCLOAK_CLIENTS_0_PERMISSIONS_0_RESOURCE_SERVER_ID: operate-api
+  KEYCLOAK_CLIENTS_0_REDIRECT_URIS_0: http://camunda-connectors
+  KEYCLOAK_CLIENTS_0_ROOT_URL: http://camunda-connectors

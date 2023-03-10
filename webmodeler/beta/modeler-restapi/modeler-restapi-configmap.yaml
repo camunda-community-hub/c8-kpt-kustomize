@@ -1,0 +1,182 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: modeler-restapi
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-restapi
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/component: modeler-restapi
+    app.kubernetes.io/part-of: camunda-platform
+data:
+  application-common.yml: |
+    # WARNING:
+    # These values are defaults and will be used unless overridden by profile specific configuration (e.g: prod!)
+
+    server:
+      url: ${RESTAPI_SERVER_URL}
+      port: 8081
+      shutdown: graceful
+      max-http-header-size: 16KB # allow JWT with a large payload
+
+    spring:
+      lifecycle:
+        timeout-per-shutdown-phase: 5s
+
+      datasource:
+        url: ${RESTAPI_DB_JDBC_URL:jdbc:postgresql://modeler-db:49156/modeler-db}    
+        username: ${RESTAPI_DB_USER}
+        password: ${RESTAPI_DB_PASSWORD}
+
+        hikari:
+          maximum-pool-size: 13
+          connection-timeout: 30000 # 30 seconds
+          data-source-properties:
+            socketTimeout: 30 # 30 seconds
+
+      jpa:
+        open-in-view: true
+        properties:
+          hibernate:
+            jdbc.time_zone: UTC
+            generate_statistics: true
+
+      flyway:
+        enabled: ${RESTAPI_MIGRATION_MIGRATE:true}
+        placeholder-replacement: false
+        clean-disabled: true
+        placeholder-prefix: ___$
+        table: schema_version
+
+      jackson:
+        default-property-inclusion: NON_ABSENT
+        deserialization:
+          ACCEPT_SINGLE_VALUE_AS_ARRAY: true
+          READ_DATE_TIMESTAMPS_AS_NANOSECONDS: false
+        serialization:
+          WRITE_DATES_AS_TIMESTAMPS: true
+          WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS: false
+        mapper:
+          ACCEPT_CASE_INSENSITIVE_ENUMS: true
+
+      security:
+        oauth2:
+          resourceserver:
+            jwt:
+              issuer-uri: ${RESTAPI_OAUTH2_TOKEN_ISSUER:}
+
+      task:
+        execution:
+          pool:
+            core-size: 1
+          shutdown:
+            await-termination: true
+            await-termination-period: ${spring.lifecycle.timeout-per-shutdown-phase}
+
+      freemarker:
+        cache: ${RESTAPI_SERVER_CACHE_TEMPLATES:true}
+        template-loader-path: classpath:/mails/templates
+        prefer-file-system-access: false
+        enabled: false
+        settings:
+          outputFormat: HTMLOutputFormat
+          outputEncoding: UTF-8
+          incompatibleImprovements: 2.3.30
+
+      mail:
+        host: ${RESTAPI_MAIL_HOST:localhost}
+        port: ${RESTAPI_MAIL_PORT:25}
+        username: ${RESTAPI_MAIL_USER:}
+        password: ${RESTAPI_MAIL_PASSWORD:}
+        properties:
+          mail.smtp.auth: ${RESTAPI_MAIL_ENABLE_TLS:true}
+          mail.smtp.starttls.enable: ${RESTAPI_MAIL_ENABLE_TLS:true}
+          mail.smtp.starttls.required: ${RESTAPI_MAIL_ENABLE_TLS:true}
+          mail.smtp.allow8bitmime: true
+
+      web:
+        resources:
+          add-mappings: false
+
+      mvc:
+        throw-exception-if-no-handler-found: true
+
+    mail:
+      from-address: ${RESTAPI_MAIL_FROM_ADDRESS:}
+      from-name: ${RESTAPI_MAIL_FROM_NAME:Camunda}
+      retry:
+        max-attempts: 5
+        delay: 5000
+        max-delay: 60000
+        multiplier: 2
+
+    logging:
+      level:
+        root: INFO
+        org.hibernate.engine.internal.StatisticalLoggingSessionEventListener: ERROR # don't let Hibernate spam our logs
+
+    management:
+      server:
+        port: 8091
+
+      endpoints:
+        enabled-by-default: false
+        web:
+          exposure:
+            include: health, info, prometheus
+          base-path: /
+          path-mapping:
+            health: health
+            prometheus: metrics
+
+      endpoint:
+        prometheus:
+          enabled: true
+        health:
+          enabled: true
+          probes:
+            enabled: true
+        info:
+          enabled: true
+
+      info:
+        git:
+          enabled: false
+
+      health:
+        defaults:
+          enabled: false
+
+      metrics:
+        web:
+          server:
+            request:
+              autotime:
+                percentiles:
+                  - 0.5
+                  - 0.9
+                  - 0.99
+
+    springdoc:
+      api-docs:
+        enabled: ${RESTAPI_SWAGGER_UI_ENABLED:false}
+      swagger-ui:
+        enabled: ${RESTAPI_SWAGGER_UI_ENABLED:false}
+        operationsSorter: alpha
+        tagsSorter: alpha
+
+    zeebe:
+      retry:
+        delay: 1000 # 1 second
+        max-attempts: 3
+
+    preferences:
+      default-values:
+        onboardingFlowSeen: false
+
+    http-client:
+      response-timeout: ${RESTAPI_HTTP_CLIENT_RESPONSE_TIMEOUT_DURATION:30s}
+      retry:
+        delay: 1s
+        max-attempts: 3

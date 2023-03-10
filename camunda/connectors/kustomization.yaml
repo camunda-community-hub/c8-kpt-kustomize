@@ -1,0 +1,12 @@
+kind: Kustomization
+metadata: # kpt-merge: /kustomization
+  name: kustomization
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+    internal.kpt.dev/upstream-identifier: 'kustomize.config.k8s.io|Kustomization|default|kustomization'
+resources:
+- connectors-client-secret.yaml
+- connectors-deployment.yaml
+- connectors-env-vars.yaml
+- connectors-service-account.yaml
+- connectors-service.yaml

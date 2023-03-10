@@ -1,0 +1,34 @@
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: psp-for-camunda8
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: psp-for-camunda8
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: PodSecurityPolicy
+spec:
+  allowPrivilegeEscalation: true
+  fsGroup:
+    rule: RunAsAny
+  hostPorts:
+  - max: 0
+    min: 0
+  readOnlyRootFilesystem: false
+  requiredDropCapabilities:
+  - all
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+  - emptyDir
+  - secret
+  - downwardAPI
+  - configMap
+  - projected
+  - persistentVolumeClaim

@@ -1,0 +1,67 @@
+namespace: camunda8-dev
+resources:
+- camunda8-dev-namespace.yaml
+- regcred.yaml # kpt-set: ${registry-secret}
+- camunda
+- shared
+- security
+- webmodeler
+- showroom
+patches:
+- target:
+    kind: Deployment
+  patch: |-
+    - op: add
+      path: /spec/template/spec/imagePullSecrets
+      value: [{ name: regcred }]
+- target:
+    kind: StatefulSet
+  patch: |-
+    - op: add
+      path: /spec/template/spec/imagePullSecrets
+      value: [{ name: regcred }]
+# images:
+# - name: camunda/identity
+#   newName: your.private.registry.example.com/camunda/identity
+# - name: camunda/operate
+#   newName: your.private.registry.example.com/camunda/operate
+# - name: camunda/optimize
+#   newName: your.private.registry.example.com/camunda/optimize
+# - name: camunda/tasklist
+#   newName: your.private.registry.example.com/camunda/tasklist
+# - name: camunda/zeebe
+#   newName: your.private.registry.example.com/camunda/zeebe
+# - name: docker.elastic.co/elasticsearch/elasticsearch
+#   newName: your.private.registry.example.com/elasticsearch/elasticsearch
+# - name: bitnami/keycloak
+#   newName: your.private.registry.example.com/bitnami/keycloak
+# - name: postgres
+#   newName: your.private.registry.example.com/postgres
+# - name: registry.camunda.cloud/web-modeler-ee/modeler-restapi
+#   newName: your.private.registry.example.com/web-modeler-ee/modeler-restapi
+# - name: registry.camunda.cloud/web-modeler-ee/modeler-webapp
+#   newName: your.private.registry.example.com/web-modeler-ee/modeler-webapp
+# - name: registry.camunda.cloud/web-modeler-ee/modeler-websockets
+#   newName: your.private.registry.example.com/web-modeler-ee/modeler-websockets
+# - name: mailhog/mailhog
+#   newName: your.private.registry.example.com/mailhog/mailhog
+# - name: bitnami/postgresql
+#   newName: your.private.registry.example.com/bitnami/postgresql
+# - name: camunda/connectors-bundle
+#   newName: your.private.registry.example.com/camunda/connectors-bundle
+# - name: busybox
+#   newName: your.private.registry.example.com/busybox
+# - name: camunda-docker-local.bin.swisscom.com/sc/docs
+#   newName: your.private.registry.example.com/sc/docs
+# - name: camunda-docker-local.bin.swisscom.com/camunda/showroom-customer-onboarding
+#   newName: your.private.registry.example.com/camunda/showroom-customer-onboarding
+# - name: hashicorp/vault-k8s
+#   newName: your.private.registry.example.com/hashicorp/vault-k8s
+# - name: hashicorp/vault
+#   newName: your.private.registry.example.com/hashicorp/vault
+# - name: docker.io/bitnami/kafka
+#   newName: your.private.registry.example.com/bitnami/kafka
+# - name: docker.io/bitnami/zookeeper
+#   newName: your.private.registry.example.com/bitnami/zookeeper
+# - name: docker.elastic.co/kibana/kibana
+#   newName: your.private.registry.example.com/kibana/kibana

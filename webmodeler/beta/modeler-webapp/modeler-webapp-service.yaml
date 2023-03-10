@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: modeler-webapp
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-webapp
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: modeler-webapp
+spec:
+  ports:
+    - name: http-clients
+      port: 8070
+      targetPort: 8070
+  selector:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-webapp
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: modeler-webapp

@@ -1,0 +1,12 @@
+kind: Kustomization
+metadata: # kpt-merge: /kustomization
+  name: kustomization
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+    internal.kpt.dev/upstream-identifier: 'kustomize.config.k8s.io|Kustomization|default|kustomization'
+resources:
+- customer-onboarding-configmap.yaml
+- customer-onboarding-service.yaml
+- customer-onboarding-deployment.yaml
+- customer-onboarding-env-vars.yaml
+- customer-onboarding-serviceaccount.yaml

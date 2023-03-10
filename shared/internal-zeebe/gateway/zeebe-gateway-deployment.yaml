@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-zeebe-gateway
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: zeebe-gateway
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: zeebe-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: zeebe-gateway
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: zeebe-gateway
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: zeebe-gateway
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: zeebe-gateway
+        sidecar.istio.io/inject: "true"
+      annotations:
+        traffic.sidecar.istio.io/excludeInboundPorts: "26502"
+        traffic.sidecar.istio.io/excludeOutboundPorts: "26502"
+        traffic.sidecar.istio.io/excludeOutboundIPRanges: "100.96.1.0/16"
+    spec:
+      serviceAccountName: camunda-zeebe-gateway-gateway
+      containers:
+        - name: zeebe-gateway
+          image: camunda/zeebe:8.1.8
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 9600
+              name: http-internal
+            - containerPort: 26500
+              name: grpc-internal
+            - containerPort: 26502
+              name: grpc-management
+          envFrom:
+            - configMapRef:
+                name: zeebe-gateway-env-vars
+          env:
+            - name: ZEEBE_GATEWAY_CLUSTER_MEMBERID
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ZEEBE_GATEWAY_CLUSTER_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          readinessProbe:
+            tcpSocket:
+              port: grpc-internal
+            initialDelaySeconds: 20
+            periodSeconds: 5
+          resources:
+            limits:
+              cpu: 400m
+              memory: 450Mi
+            requests:
+              cpu: 400m
+              memory: 450Mi
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/component
+                    operator: In
+                    values:
+                      - zeebe-gateway
+              topologyKey: kubernetes.io/hostname

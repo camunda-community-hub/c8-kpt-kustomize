@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: camunda-keycloak-env-vars
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/component: keycloak
+    app.kubernetes.io/part-of: camunda-platform
+data:
+  KEYCLOAK_ADMIN_USER: admin
+  KEYCLOAK_AUTH_CACHE_OWNERS_COUNT: "1"
+  KEYCLOAK_CACHE_OWNERS_COUNT: "1"
+  KEYCLOAK_CREATE_ADMIN_USER: "true"
+  KEYCLOAK_DATABASE_USER: bn_keycloak # kpt-set: ${keycloak-postgresql-user}
+  KEYCLOAK_DATABASE_JDBC_URL: jdbc:postgresql://camunda-postgresql:5432/bitnami_keycloak?currentSchema=public # kpt-set: ${keycloak-postgresql-url}
+  KEYCLOAK_ENABLE_STATISTICS: "false"
+  KEYCLOAK_ENABLE_TLS: "false"
+  KEYCLOAK_HTTP_PORT: "8080"
+  KEYCLOAK_MANAGEMENT_USER: manager
+  KEYCLOAK_PROXY_ADDRESS_FORWARDING: "false"

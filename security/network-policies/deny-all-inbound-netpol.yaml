@@ -1,0 +1,10 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: # kpt-merge: /deny-all-inbound
+  name: deny-all-inbound
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'networking.k8s.io|NetworkPolicy|default|deny-all-inbound'
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress

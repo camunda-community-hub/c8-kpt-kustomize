@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-operate
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: operate
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: operate
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: operate
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: operate
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: operate
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: operate
+    spec:
+      serviceAccountName: camunda-operate
+      containers:
+      - name: operate
+        image: camunda/operate:8.1.8
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: operate-env-vars
+        env:
+        - name: CAMUNDA_OPERATE_IDENTITY_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: "camunda-operate-identity-secret"
+              key: operate-secret
+        resources: {}
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+      #   volumeMounts:
+      #   - name: config
+      #     mountPath: /usr/local/operate/config/application.yml
+      #     subPath: application.yml
+      #   - name: keystore
+      #     mountPath: /etc/ssl/camunda
+      # volumes:
+      # - name: config
+      #   configMap:
+      #     name: camunda-operate
+      #     defaultMode: 484
+      # - name: keystore
+      #   configMap:
+      #     name: trust-store-jks

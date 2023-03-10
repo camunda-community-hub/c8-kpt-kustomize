@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: modeler-restapi
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: modeler-restapi
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: modeler-restapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: modeler-restapi
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: modeler-restapi
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: modeler-restapi
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: modeler-restapi
+        sidecar.istio.io/inject: "true"
+    spec:
+      serviceAccountName: camunda-modeler-restapi
+      containers:
+        - args:
+            - /bin/sh
+            - -c
+            - java  org.springframework.boot.loader.JarLauncher
+          envFrom:
+            - configMapRef:
+                name: modeler-restapi-env-vars
+          env:
+            - name: RESTAPI_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi
+                  key: password
+            - name: RESTAPI_PUSHER_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi-pusher
+                  key: key
+            - name: RESTAPI_PUSHER_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: modeler-restapi-pusher
+                  key: secret
+            - name: RESTAPI_SERVER_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          image: registry.camunda.cloud/web-modeler-ee/modeler-restapi:0.6.0-beta
+          name: modeler-restapi
+          ports:
+            - containerPort: 8081
+            - containerPort: 8091
+          resources: {}
+          volumeMounts:
+            - name: keystore
+              mountPath: /etc/ssl/camunda
+            - name: trusted-cas
+              mountPath: /etc/ssl/trusted-ca
+            - name: modeler-restapi
+              mountPath: /home/runner/BOOT-INF/classes/application-common.yml
+              subPath: application-common.yml
+      restartPolicy: Always
+      volumes:
+        - name: keystore
+          configMap:
+            name: trust-store-jks
+        - name: trusted-cas
+          configMap:
+            name: trusted-cas
+        - name: modeler-restapi
+          configMap:
+            name: modeler-restapi

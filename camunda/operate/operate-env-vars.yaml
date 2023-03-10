@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: operate-env-vars
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: operate
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: operate
+data:
+  SERVER_SERVLET_CONTEXT_PATH: /operate
+  SPRING_PROFILES_ACTIVE: identity-auth
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: https://camunda.example.com/auth/realms/camunda-platform/protocol/openid-connect/certs # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/protocol/openid-connect/certs
+  CAMUNDA_OPERATE_ELASTICSEARCH_URL: http://elasticsearch-master:9200 #kpt-set ${elasticsearch-url}
+  CAMUNDA_OPERATE_IDENTITY_AUDIENCE: operate-api
+  CAMUNDA_OPERATE_IDENTITY_CLIENT_ID: operate
+  CAMUNDA_OPERATE_IDENTITY_ISSUER_BACKEND_URL: http://camunda-keycloak/auth/realms/camunda-platform # kpt-set: ${keycloak-backend}/auth/realms/camunda-platform
+  CAMUNDA_OPERATE_IDENTITY_ISSUER_URL: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+  CAMUNDA_OPERATE_ZEEBE_GATEWAYADDRESS: camunda-zeebe-gateway:26500
+  CAMUNDA_OPERATE_ZEEBEELASTICSEARCH_URL: http://elasticsearch-master:9200 #kpt-set ${elasticsearch-url}
+  CAMUNDA_OPERATE_ENTERPRISE: "true"
+  #JDK_JAVA_OPTIONS: -Dlogging.level.root=info -Djavax.net.ssl.trustStore=/etc/ssl/camunda/trust-store.jks -Djavax.net.ssl.trustStorePassword=demodemo

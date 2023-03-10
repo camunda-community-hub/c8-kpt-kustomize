@@ -1,0 +1,108 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: camunda-psp
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: camunda-psp
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: RoleBinding
+roleRef:
+  kind: Role
+  name: use-psp-for-camunda8
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-identity
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-keycloak
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-operate
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-optimize
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-tasklist
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-zeebe
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-zeebe-gateway-gateway
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-modeler-db
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-modeler-mailhog
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-modeler-restapi
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-modeler-webapp
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-modeler-websockets
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: elasticsearch-master
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-connectors
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: kibana
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: minisite
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: kafka
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: zookeeper
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: hashicorp-vault
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: hashicorp-vault-agent-injector
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: customer-onboarding
+  namespace: camunda8-dev
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: camunda-psp-privileged
+  labels:
+    app: camunda-platform
+    app.kubernetes.io/name: camunda-psp-privileged
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/version: "8.1.5"
+    app.kubernetes.io/component: RoleBinding
+roleRef:
+  kind: Role
+  name: use-psp-for-camunda8-privileged
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+- kind: ServiceAccount
+  name: elasticsearch-master
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: camunda-modeler-db
+  namespace: camunda8-dev
+- kind: ServiceAccount
+  name: minisite
+  namespace: camunda8-dev

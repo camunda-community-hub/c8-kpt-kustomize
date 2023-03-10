@@ -1,0 +1,29 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: camunda8-zeebe
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: camunda8-zeebe
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: VirtualService
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'networking.istio.io|VirtualService|default|camunda8-zeebe'
+spec:
+  exportTo:
+    - '*'
+  gateways:
+    - 'helix-ingress-gateway-internal-camunda/internal-camunda' # kpt-set: ${camunda-ingress-gateway-namespace}/${camunda-ingress-gateway-name}
+  hosts:
+    - 'zeebe.example.com' # kpt-set: zeebe.${camunda-domain}
+  http:
+    - match:
+        - port: 443
+          name: grpc-internal-camunda
+      route:
+        - destination:
+            host: camunda-zeebe-gateway
+            port:
+              number: 26500

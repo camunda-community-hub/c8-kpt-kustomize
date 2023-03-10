@@ -1,0 +1,16 @@
+kind: Kustomization
+metadata: # kpt-merge: /kustomization
+  name: kustomization
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+    internal.kpt.dev/upstream-identifier: 'kustomize.config.k8s.io|Kustomization|default|kustomization'
+resources:
+- identity-deployment.yaml
+- identity-env-vars.yaml
+- identity-service-account.yaml
+- identity-service-monitor.yaml
+- identity-service.yaml
+- optimize-identity-secret.yaml
+- operate-identity-secret.yaml
+- tasklist-identity-secret.yaml
+- webmodeler-identity-secret.yaml

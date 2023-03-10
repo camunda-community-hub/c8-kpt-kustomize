@@ -1,0 +1,29 @@
+apiVersion: security.istio.io/v1beta1
+kind: RequestAuthentication
+metadata:
+  name: jwt-camunda-zeebe
+  namespace: istio-system
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: jwt-camunda-zeebe
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: RequestAuthentication
+spec:
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: zeebe-gateway
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: zeebe-gateway
+  jwtRules:
+  - issuer: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+    #jwksUri: https://camunda.example.com/auth/realms/camunda-platform/protocol/openid-connect/certs # kpt-set: #jwksUri: https://${keycloak-domain}/auth/realms/camunda-platform/protocol/openid-connect/certs
+    jwks: '{"keys":[{"kid":"I_yCf.....}' # kpt-set: ${jwks}
+    audiences:
+    - camunda-platform
+    - workflow-manager
+    - workflow-manager-api

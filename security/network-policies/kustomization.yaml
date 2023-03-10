@@ -1,0 +1,10 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+metadata: # kpt-merge: /kustomization
+  name: kustomization
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+    internal.kpt.dev/upstream-identifier: 'kustomize.config.k8s.io|Component|default|kustomization'
+resources:
+  - deny-all-inbound-netpol.yaml
+  - allow-inbound-to-istio-sidecar-from-prometheus-netpol.yaml

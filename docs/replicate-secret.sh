@@ -1,0 +1,1 @@
+kubectl annotate secret -n helix-ingress-gateway-internal-camunda internal-camunda-gateway-credential replicator.v1.mittwald.de/replicate-to=camunda8-dev

@@ -1,0 +1,256 @@
+kind: AuthorizationPolicy
+apiVersion: security.istio.io/v1beta1
+metadata:
+  name: ext-authz-oauth2-keycloak-default-deny
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: ext-authz-oauth2-keycloak-default-deny
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: AuthorizationPolicy
+spec:
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: zeebe-gateway
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: zeebe-gateway
+  action: DENY
+  rules:
+    - from:
+        - source:
+            notRequestPrincipals:
+              - "*"
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+---
+kind: AuthorizationPolicy
+apiVersion: security.istio.io/v1beta1
+metadata:
+  name: ext-authz-oauth2-keycloak-default-allow
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: ext-authz-oauth2-keycloak-default-allow
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: AuthorizationPolicy
+spec:
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: zeebe-gateway
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: zeebe-gateway
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            notRequestPrincipals:
+              - "*"
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            notPaths:
+              - /auth/*
+              - /identity/*
+---
+kind: AuthorizationPolicy
+apiVersion: security.istio.io/v1beta1
+metadata:
+  name: ext-authz-oauth2-keycloak-zeebe-api
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: ext-authz-oauth2-keycloak-zeebe-api
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: AuthorizationPolicy
+    #compliant-to: https://docs.camunda.io/docs/apis-clients/grpc/
+spec:
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: zeebe-gateway
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: zeebe-gateway
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/Topology
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - Topology
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/DeployProcess
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - DeployProcess
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/DeployResource
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - DeployResource
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/CreateProcessInstance
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - CreateProcessInstance
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/ActivateJobs
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - ActivateJobs
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/CompleteJob
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - CompleteJob
+    - from:
+        - source:
+            requestPrincipals:
+              - https://camunda.example.com/auth/realms/camunda-platform/* # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/*
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /gateway_protocol.Gateway/FailJob
+            methods:
+              - POST
+      when:
+        - key: request.auth.claims[permissions][workflow-manager-api]
+          values:
+            - FailJob
+    - from:
+        - source:
+            notRequestPrincipals:
+              - "*"
+      to:
+        - operation:
+            hosts:
+              - zeebe.example.com # kpt-set: zeebe.${camunda-domain}
+              - zeebe.example.com:443 # kpt-set: zeebe.${camunda-domain}:443
+            paths:
+              - /inbound/*
+---
+kind: AuthorizationPolicy
+apiVersion: security.istio.io/v1beta1
+metadata:
+  name: ext-authz-oauth2-keycloak-internal-allow-all
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: ext-authz-oauth2-keycloak-internal-allow-all
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: AuthorizationPolicy
+spec:
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: zeebe-gateway
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: zeebe-gateway
+  action: ALLOW
+  rules:
+    - from:
+        - source:
+            notRequestPrincipals:
+              - "*"
+      to:
+        - operation:
+            hosts:
+              - camunda-zeebe-gateway:26500
+              - camunda-zeebe-gateway.camunda8-dev.svc.cluster.local:26500

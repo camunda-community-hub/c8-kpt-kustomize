@@ -1,0 +1,28 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: camunda8-webmodeler-ws
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: camunda8-webmodeler-ws
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: VirtualService
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'networking.istio.io|VirtualService|default|camunda8-webmodeler-ws'
+spec:
+  exportTo:
+    - '*'
+  gateways:
+    - 'helix-ingress-gateway-internal-camunda/internal-camunda' # kpt-set: ${camunda-ingress-gateway-namespace}/${camunda-ingress-gateway-name}
+  hosts:
+    - webmodeler-ws.example.com # kpt-set: webmodeler-ws.${camunda-domain}
+  http:
+    - match:
+        - port: 443
+      route:
+        - destination:
+            host: modeler-websockets
+            port:
+              number: 8060

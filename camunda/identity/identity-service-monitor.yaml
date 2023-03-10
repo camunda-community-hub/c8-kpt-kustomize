@@ -1,0 +1,30 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata: # kpt-merge: /identity-server-metrics
+  name: identity-server-metrics
+  labels:
+    release: prometheus-operator
+  annotations:
+    internal.kpt.dev/upstream-identifier: 'monitoring.coreos.com|ServiceMonitor|default|identity-server-metrics'
+spec:
+  endpoints:
+    - port: http-metrics
+      targetPort: 8082
+      path: /actuator/prometheus
+      scheme: https
+      tlsConfig:
+        caFile: /etc/prom-certs/root-cert.pem
+        certFile: /etc/prom-certs/cert-chain.pem
+        keyFile: /etc/prom-certs/key.pem
+        insecureSkipVerify: true # Prometheus does not support Istio security naming, thus skip verifying target pod ceritifcate
+  namespaceSelector:
+    matchNames:
+      - camunda8-dev
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: identity
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: identity

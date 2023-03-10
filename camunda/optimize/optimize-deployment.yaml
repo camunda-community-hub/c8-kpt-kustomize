@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-optimize
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: optimize
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: optimize
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: optimize
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: optimize
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: optimize
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: optimize
+    spec:
+      serviceAccountName: camunda-optimize
+      containers:
+      - name: optimize
+        image: camunda/optimize:3.9.3
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: optimize-env-vars
+        env:
+        - name: CAMUNDA_OPTIMIZE_IDENTITY_CLIENTSECRET
+          valueFrom:
+            secretKeyRef:
+              name: "camunda-optimize-identity-secret"
+              key: optimize-secret
+        resources: {}
+        ports:
+        - containerPort: 8090
+          name: http
+          protocol: TCP
+        - containerPort: 8092
+          name: tcp-management
+          protocol: TCP

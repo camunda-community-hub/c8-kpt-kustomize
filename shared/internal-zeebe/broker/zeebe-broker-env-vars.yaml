@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zeebe-broker-env-vars
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: zeebe
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: zeebe-broker
+data:
+  JAVA_TOOL_OPTIONS: -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/usr/local/zeebe/data -XX:ErrorFile=/usr/local/zeebe/data/zeebe_error%p.log -XX:+ExitOnOutOfMemoryError
+  LC_ALL: C.UTF-8
+  ZEEBE_BROKER_CLUSTER_CLUSTERSIZE: "3"
+  ZEEBE_BROKER_CLUSTER_PARTITIONSCOUNT: "3"
+  ZEEBE_BROKER_CLUSTER_REPLICATIONFACTOR: "3"
+  ZEEBE_BROKER_DATA_DISKUSAGECOMMANDWATERMARK: "0.85"
+  ZEEBE_BROKER_DATA_DISKUSAGEREPLICATIONWATERMARK: "0.87"
+  ZEEBE_BROKER_DATA_SNAPSHOTPERIOD: 5m
+  ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_ARGS_URL: http://elasticsearch-master:9200 #kpt-set ${elasticsearch-url}
+  ZEEBE_BROKER_EXPORTERS_ELASTICSEARCH_CLASSNAME: io.camunda.zeebe.exporter.ElasticsearchExporter
+  ZEEBE_BROKER_GATEWAY_ENABLE: "false"
+  ZEEBE_BROKER_NETWORK_COMMANDAPI_PORT: "26501"
+  ZEEBE_BROKER_NETWORK_INTERNALAPI_PORT: "26502"
+  ZEEBE_BROKER_NETWORK_MONITORINGAPI_PORT: "9600"
+  ZEEBE_BROKER_THREADS_CPUTHREADCOUNT: "3"
+  ZEEBE_BROKER_THREADS_IOTHREADCOUNT: "3"
+  ZEEBE_LOG_LEVEL: info

@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: camunda-connectors
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: connectors
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: connectors
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: camunda-platform # kpt-set: ${camunda-app-name}
+      app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+      app.kubernetes.io/name: connectors
+      app.kubernetes.io/instance: camunda
+      app.kubernetes.io/part-of: camunda-platform
+      app.kubernetes.io/component: connectors
+  template:
+    metadata:
+      labels:
+        app: camunda-platform # kpt-set: ${camunda-app-name}
+        app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+        app.kubernetes.io/name: connectors
+        app.kubernetes.io/instance: camunda
+        app.kubernetes.io/part-of: camunda-platform
+        app.kubernetes.io/component: connectors
+    spec:
+      serviceAccountName: camunda-connectors
+      containers:
+        - name: connectors
+          image: camunda/connectors-bundle:0.16.1
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: connectors-env-vars
+          env:
+            - name: CAMUNDA_OPERATE_CLIENT_CLIENT-SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: camunda-connectors
+                  key: client-secret
+          resources: {}
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          volumeMounts:
+            - name: keystore
+              mountPath: /etc/ssl/camunda
+      volumes:
+        - name: keystore
+          configMap:
+            name: trust-store-jks

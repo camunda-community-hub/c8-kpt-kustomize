@@ -1,0 +1,19 @@
+kind: Kustomization
+metadata: # kpt-merge: /kustomization
+  name: kustomization
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+    internal.kpt.dev/upstream-identifier: 'kustomize.config.k8s.io|Kustomization|default|kustomization'
+resources:
+- injector-clusterrole.yaml
+- injector-clusterrolebinding.yaml
+- injector-deployment.yaml
+- injector-mutating-webhook.yaml
+- injector-service.yaml
+- injector-serviceaccount.yaml
+- server-clusterrolebinding.yaml
+- server-config-configmap.yaml
+- server-headless-service.yaml
+- server-service.yaml
+- server-serviceaccount.yaml
+- server-statefulset.yaml

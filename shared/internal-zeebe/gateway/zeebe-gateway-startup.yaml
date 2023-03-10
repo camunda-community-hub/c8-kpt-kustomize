@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zeebe-gateway-startup
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: zeebe-gateway
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: zeebe-gateway
+data:
+  startup.sh: |-
+    #!/bin/bash -xeu
+
+    HOST=$(hostname -i)
+
+    openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in /usr/local/zeebe/tls/tls.key -out /tmp/pkcs8.key
+
+    if [ "$ZEEBE_STANDALONE_GATEWAY" = "true" ]; then
+        export ZEEBE_GATEWAY_NETWORK_HOST=${ZEEBE_GATEWAY_NETWORK_HOST:-${HOST}}
+        export ZEEBE_GATEWAY_CLUSTER_HOST=${ZEEBE_GATEWAY_CLUSTER_HOST:-${ZEEBE_GATEWAY_NETWORK_HOST}}
+
+        exec /usr/local/zeebe/bin/gateway
+    elif [ "$ZEEBE_RESTORE" = "true" ]; then
+        exec /usr/local/zeebe/bin/restore --backupId=${ZEEBE_RESTORE_FROM_BACKUP_ID}
+    else
+        export ZEEBE_BROKER_NETWORK_HOST=${ZEEBE_BROKER_NETWORK_HOST:-${HOST}}
+        export ZEEBE_BROKER_GATEWAY_CLUSTER_HOST=${ZEEBE_BROKER_GATEWAY_CLUSTER_HOST:-${ZEEBE_BROKER_NETWORK_HOST}}
+
+        exec /usr/local/zeebe/bin/broker
+    fi

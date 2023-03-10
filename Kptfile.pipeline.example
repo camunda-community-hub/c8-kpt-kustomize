@@ -1,0 +1,52 @@
+pipeline:
+  mutators:
+    - image: cnbb-docker-local.bin.swisscom.com/helix/apply-setters:v0.2
+      configMap:
+        # remove this:
+        registry-secret: regcred.yaml
+        # app version
+        camunda-app-version: 1.0.0
+        # app name
+        camunda-app-name: camunda-platform
+        # wildcard domain as base
+        camunda-domain: example.com
+        # istio ingress (name / namespace)
+        camunda-ingress-gateway-namespace: helix-ingress-gateway-internal-camunda
+        camunda-ingress-gateway-name: internal-camunda
+        #remove this - this is only possible with external keycloak
+        jwks: '{"keys":[{"kid":"G5b0tnE-wI7Kdyb1tjBojNyW9q4y0B10jeB8Ks5j1fY","kty":"RSA","alg":"RS256","use":"sig","n":"0i688NYpFDM6yUGJ_JTvh7WGSJVjx8X6ZNWdIjVWO3jyesiQ0MzKQZdyXnqKIufM95Uv0l2mQWQZ1osYdIZ35k5-BYTTZ_f2B2ENjKhoWZZHtapjDVahxHtKD2Y9Il8tYRnyMoYDnCjcLM5azyMHV8pYFPiIsn96YQLXtg02LL3wtPOoFoFx9dnTyyK4m1FWnPZ6TadHrIG7IqmeigOIvIPhu6dtCZEqjxKNGIMg88rufV1Vk0WqViVKizC4V2XR6QD10tTm6B0iJoKuTvh-T4GnJtzw6ElxM3qz623khUu9SDP49N1_oARuIleV4IMEfjEKulp7TGLrYgHampmZKw","e":"AQAB","x5c":["MIICrzCCAZcCBgGF0IkEqzANBgkqhkiG9w0BAQsFADAbMRkwFwYDVQQDDBBjYW11bmRhLXBsYXRmb3JtMB4XDTIzMDEyMDE4NTMzOFoXDTMzMDEyMDE4NTUxOFowGzEZMBcGA1UEAwwQY2FtdW5kYS1wbGF0Zm9ybTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANIuvPDWKRQzOslBifyU74e1hkiVY8fF+mTVnSI1Vjt48nrIkNDMykGXcl56iiLnzPeVL9JdpkFkGdaLGHSGd+ZOfgWE02f39gdhDYyoaFmWR7WqYw1WocR7Sg9mPSJfLWEZ8jKGA5wo3CzOWs8jB1fKWBT4iLJ/emEC17YNNiy98LTzqBaBcfXZ08siuJtRVpz2ek2nR6yBuyKpnooDiLyD4bunbQmRKo8SjRiDIPPK7n1dVZNFqlYlSoswuFdl0ekA9dLU5ugdIiaCrk74fk+Bpybc8OhJcTN6s+tt5IVLvUgz+PTdf6AEbiJXleCDBH4xCrpae0xi62IB2pqZmSsCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAiuP46aAUwa+tCKVBDEAGSD8d1AWhRE9eEb0Jk0WJvods59fJJcNa+ACRBH1ZTbeVEoyJb/4Q7nBhS30ijz/ZJEbyO0JwK97sij8VIY8RUTscCQw6aEPd190Y2i/kd8yQp0LwudTjN3vNuu0TLfOH/S98No9Air90jL2nTa6QJtbtDtQKmD5tgQUVzTOaXugPg1sJ7bHj5fGPzXFrPUebDpFEalGvaEGcIuRPUd0pkMebujr66EDtVsa3btBYtxXA0qqnfcFjeGE4rBiP+tikOFS/9Z0eKo4CfVB3czTCh9iRn1kjv7phTMO9kytfP8WYkNUFdDBeWWmnujHUHGvFgg=="],"x5t":"TIeFO-mDqV8OOfRGVAnIitdqBKA","x5t#S256":"7FhkTvsOpbDd11IMhuzh7LzT0t5jbQWVkzjhpuVGLV8"},{"kid":"Rq7tZCTpHbHTgmo8svzLwM0hX5rUnOcpZ332AzRh3C4","kty":"RSA","alg":"RS256","use":"enc","n":"8rSMANVr3oXzTpQY5JnWZN_O_gbwBzXFzgoC5l7N_dFrKtqQwa_jjwsYakBkKShHsPpBonkzf437eWOrJt4YQDx_IeA97RrK2kP9WxPb5L8vlu8VWMVL8DUhNRw2abviFxdHtiFtaYl1nNyXBkfpWS59EaOhLlKZ_nobqK9Rar2S9QaqLQQesjfoE0F_2SA93JYMEgGi40jJiRug_zDUglsv4cKgRT6yXCP5uSIjK_5thtNrRbEVkLXYo_fOm8tVqk45oAvlkKcwFcx-n5iE5Wh-UPZNNgl0kqX97Wd9SjVGKkOl1n4xhX7hqwQm5dYeiwAS_vQ4-PhHfjM6wHMGNw","e":"AQAB","x5c":["MIICrzCCAZcCBgGF0IkDrzANBgkqhkiG9w0BAQsFADAbMRkwFwYDVQQDDBBjYW11bmRhLXBsYXRmb3JtMB4XDTIzMDEyMDE4NTMzOFoXDTMzMDEyMDE4NTUxOFowGzEZMBcGA1UEAwwQY2FtdW5kYS1wbGF0Zm9ybTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAPK0jADVa96F806UGOSZ1mTfzv4G8Ac1xc4KAuZezf3RayrakMGv448LGGpAZCkoR7D6QaJ5M3+N+3ljqybeGEA8fyHgPe0aytpD/VsT2+S/L5bvFVjFS/A1ITUcNmm74hcXR7YhbWmJdZzclwZH6VkufRGjoS5Smf56G6ivUWq9kvUGqi0EHrI36BNBf9kgPdyWDBIBouNIyYkboP8w1IJbL+HCoEU+slwj+bkiIyv+bYbTa0WxFZC12KP3zpvLVapOOaAL5ZCnMBXMfp+YhOVoflD2TTYJdJKl/e1nfUo1RipDpdZ+MYV+4asEJuXWHosAEv70OPj4R34zOsBzBjcCAwEAATANBgkqhkiG9w0BAQsFAAOCAQEAZs2OWK5VffEBsEMhm3DQLAmjo8lWT3YABRApcW9Z93rdm8IeiwCqAU+t1X3s4tdYAd7qRyyTyJvT9o258Do3afm0uJBQOTCDNaiyA4LXHj08lRR84S4Jj3F5NSZB+N6t5VD9xFo7Gk3BhCGIkAB/dVAxPhVsnbW5kwo4TptwVZGjpK/hElibxRUepTGUzr6lcphdomRYhKTnZogSdEPyw2p0TIqwI3Dt8teLe3TjfySI464nYogilqCSHwGQNjVBQqnBE9iO9cNgp7SbMP21Qz6Y4W62xpzaSoia2HK28aShqcactJXYC0quWrLV5l2Eak0b4lzsjk15JBxXB8ivzQ=="],"x5t":"4u0k2LaMWgEQDuForyLcpcf4vzg","x5t#S256":"WUQ3Q_b88qSaoZODLdcZTLDvnpARFr82YfUMuAOyCZI"}]}'
+        #keycloak: deploy in the namespace internal-keycloak or us an external instance (external-keycloak). 
+        keycloak-deployment-type: internal-keycloak
+        # keycloak domain - wildcard domain plus hostname "camunda"
+        keycloak-domain: camunda.example.com
+        #internal keycloak connection
+        keycloak-backend: http://camunda-keycloak
+        # postgresql used for keycloak, deploy it in the namespace (internal-postgresql) or use external service (external-postgresql). user and url are needed in both cases.
+        keycloak-postgresql-deployment-type: external-postgresql
+        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-keycloak
+        keycloak-postgresql-user: camunda8-keycloak
+        # elasticsearch deployment, url is needed in both cases
+        elasticsearch-deployment-type: internal-elasticsearch
+        elasticsearch-url: http://elasticsearch-master:9200
+        kibana-deployment-type: internal-kibana
+        # zeebe deployment, in the namespace, url is needed in both cases
+        zeebe-deployment-type: internal-zeebe
+        zeebe-host: camunda-zeebe-gateway:26500
+        # webmodeler deployment ( beta or none )
+        webmodeler-deployment-type: beta
+        # postgresql used for webmodeler, deploy it in the namespace (internal-postgresql) or use external service (external-postgresql). user and url are needed in both cases.
+        webmodeler-postgresql-deployment-type: external-postgresql
+        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-webmodeler
+        webmodeler-postgresql-user: camunda8-webmodeler
+        # mailhog is a simulation if you do not use a smtp gateway
+        webmodeler-mailhog-deployment-type: on
+        # addon for connector tests: set to "internal-vault" if you want to deploy it, "external-vault" if not
+        vault-deployment-type: internal-vault
+        # addon for connector tests:  set to "internal-vault" if you want to deploy it, "external-vault" if not
+	      kafka-deployment-type: internal-kafka
+
+#        internal urls:
+#        keycloak-postgresql-url: jdbc:postgresql://camunda-postgresql:5432/bitnami_keycloak?currentSchema=public
+#        keycloak-postgresql-user: bn_keycloak
+#        webmodeler-postgresql-url: jdbc:postgresql://modeler-db:49156/modeler-db
+#        webmodeler-postgresql-user: modeler-db-user

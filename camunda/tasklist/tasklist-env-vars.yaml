@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tasklist-env-vars
+  namespace: camunda8-dev
+  labels:
+    app: camunda-platform # kpt-set: ${camunda-app-name}
+    app.kubernetes.io/version: "1.0.0" # kpt-set: ${camunda-app-version}
+    app.kubernetes.io/name: tasklist
+    app.kubernetes.io/instance: camunda
+    app.kubernetes.io/part-of: camunda-platform
+    app.kubernetes.io/component: tasklist
+data:
+  CAMUNDA_TASKLIST_ELASTICSEARCH_URL: http://elasticsearch-master:9200 #kpt-set ${elasticsearch-url}
+  CAMUNDA_TASKLIST_IDENTITY_AUDIENCE: tasklist-api
+  CAMUNDA_TASKLIST_IDENTITY_CLIENT_ID: tasklist
+  CAMUNDA_TASKLIST_IDENTITY_ISSUER_BACKEND_URL: http://camunda-keycloak/auth/realms/camunda-platform # kpt-set: ${keycloak-backend}/auth/realms/camunda-platform
+  CAMUNDA_TASKLIST_IDENTITY_ISSUER_URL: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+  CAMUNDA_TASKLIST_ZEEBE_GATEWAYADDRESS: camunda-zeebe-gateway:26500 # kpt-set: ${zeebe-host}
+  CAMUNDA_TASKLIST_ZEEBEELASTICSEARCH_URL: http://elasticsearch-master:9200 #kpt-set ${elasticsearch-url}
+  CAMUNDA_TASKLIST_ENTERPRISE: "true"
+  GRAPHQL_PLAYGROUND_ENABLED: "true"
+  GRAPHQL_PLAYGROUND_SETTINGS_REQUEST_CREDENTIALS: include
+  #  JDK_JAVA_OPTIONS: -Dlogging.level.root=info -Djavax.net.ssl.trustStore=/etc/ssl/camunda/trust-store.jks -Djavax.net.ssl.trustStorePassword=demodemo
+  SERVER_SERVLET_CONTEXT_PATH: /tasklist
+  SPRING_PROFILES_ACTIVE: identity-auth
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUERURI: https://camunda.example.com/auth/realms/camunda-platform # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI: https://camunda.example.com/auth/realms/camunda-platform/protocol/openid-connect/certs # kpt-set: https://${keycloak-domain}/auth/realms/camunda-platform/protocol/openid-connect/certs

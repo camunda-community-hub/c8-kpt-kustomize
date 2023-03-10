@@ -1,0 +1,4 @@
+resources:
+- postgresql-service-headless.yaml
+- postgresql-service.yaml
+- postgresql-statefulset.yaml
