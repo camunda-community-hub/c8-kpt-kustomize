@@ -54,13 +54,8 @@ pipeline:
         webmodeler-mailhog-deployment-type: on
         vault-deployment-type: internal-vault
         kafka-deployment-type: internal-kafka
-        #        external urls:
-        #        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-keycloak
-        #        keycloak-postgresql-user: camunda8-keycloak
-        #        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-webmodeler
-        #        webmodeler-postgresql-user: modeler-db-user
 #        external urls:
-#        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-keycloak
+#        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.example.com:49156,camunda-postgres-secondary-nonprod.example.com:49156/camunda8-keycloak
 #        keycloak-postgresql-user: camunda8-keycloak
-#        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-webmodeler
+#        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.example.com:49156,camunda-postgres-secondary-nonprod.example.com:49156/camunda8-webmodeler
 #        webmodeler-postgresql-user: modeler-db-user
