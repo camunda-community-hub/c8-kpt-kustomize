@@ -52,9 +52,6 @@ All camunda microservices and connectors - without zeebe
 ### /docs
 Static content for docs site.
 
-### /minisite
-Runtime for publishing docs (and patches...)
-
 ### /security
 All manifests for Istio, TLS and more
 
