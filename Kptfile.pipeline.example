@@ -23,7 +23,7 @@ pipeline:
         keycloak-backend: http://camunda-keycloak
         # postgresql used for keycloak, deploy it in the namespace (internal-postgresql) or use external service (external-postgresql). user and url are needed in both cases.
         keycloak-postgresql-deployment-type: external-postgresql
-        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-keycloak
+        keycloak-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.example.com:49156,camunda-postgres-secondary-nonprod.example.com:49156/camunda8-keycloak
         keycloak-postgresql-user: camunda8-keycloak
         # elasticsearch deployment, url is needed in both cases
         elasticsearch-deployment-type: internal-elasticsearch
@@ -36,14 +36,14 @@ pipeline:
         webmodeler-deployment-type: beta
         # postgresql used for webmodeler, deploy it in the namespace (internal-postgresql) or use external service (external-postgresql). user and url are needed in both cases.
         webmodeler-postgresql-deployment-type: external-postgresql
-        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.sccloudres.net:49156,camunda-postgres-secondary-nonprod.sccloudres.net:49156/camunda8-webmodeler
+        webmodeler-postgresql-url: jdbc:postgresql://camunda-postgres-primary-nonprod.example.com:49156,camunda-postgres-secondary-nonprod.example.com:49156/camunda8-webmodeler
         webmodeler-postgresql-user: camunda8-webmodeler
         # mailhog is a simulation if you do not use a smtp gateway
         webmodeler-mailhog-deployment-type: on
         # addon for connector tests: set to "internal-vault" if you want to deploy it, "external-vault" if not
         vault-deployment-type: internal-vault
         # addon for connector tests:  set to "internal-vault" if you want to deploy it, "external-vault" if not
-	      kafka-deployment-type: internal-kafka
+	 kafka-deployment-type: internal-kafka
 
 #        internal urls:
 #        keycloak-postgresql-url: jdbc:postgresql://camunda-postgresql:5432/bitnami_keycloak?currentSchema=public
