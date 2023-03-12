@@ -17,15 +17,15 @@ The solution allows to deploy camunda 8 platform modularized to any kubernetes c
 
 For the connectors this project will enable
 
-- SecretProvider based on Hashicorp Vault
-- Kafka Inbound and Outbound Connectors
+- [SecretProvider based on Hashicorp Vault](https://github.com/bluebossa63/camunda-custom-connector-poc)
+- [Kafka Inbound and Outbound Connectors](https://github.com/bluebossa63/camunda-custom-connector-poc)
 - [Kafka Exporter](https://github.com/camunda-community-hub/zeebe-kafka-exporter)
 
 If you are interested to contribute, we're looking for help.
 
 ## Repository Documentation
 
-This repo shall allow a modular deployment of camunda components as needed. Based on the official helm charts, Istio and the webmodeler are added. This repository is built on the standard tools of the Swisscom Helix platform: [kpt](https://kpt.dev/installation/) and [kustomize](https://kustomize.io/).
+This repo shall enable a modular deployment of camunda components as needed. Based on the official helm charts, Istio and the webmodeler are added. This repository is built on the standard tools of the Swisscom Helix platform: [kpt](https://kpt.dev/installation/) and [kustomize](https://kustomize.io/).
 
 The process is basically to check out the package (repo template) over kpt into a fresh repository of yours. kpt will then update the files, the result will be checked into your repository.
 

@@ -8,6 +8,6 @@ Kubernetes Resources exposing and securing the services.
 
 [network-policies](.) are the rules to establish a zero trust micro-segmentation.
 
-[psp](.) needed for clusters that still enforce PodSecurityPolicy.
+[psp](.) needed for clusters that still enforce PodSecurityPolicy. Please disable it in [kustomization.yaml](../kustomization.yaml) if you do not need it.
 
 [tls](../docs/tls.md) contain secrets and configmaps that apply to a given environment. You will have to setup them correctly for your environment.

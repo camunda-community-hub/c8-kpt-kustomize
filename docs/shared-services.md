@@ -3,11 +3,7 @@
 The camunda platform 8 helm chart comes with a full set of services that could easily be replaced by shared and even managed services.
 Most of the following questions depend on the deployment and operating model that is chosen for a SaaS.
 
-I would create an optional Helix package that is capable to be deployed multiple times (fqdn and ingress gateway changes).
-
 ### Keycloak
-
-Swisscom Helix offers a Keycloak instance. Why not use this (management?) instance?
 
 Camunda Identity has a initialization step that is setting up and maintaining state of system clients used by the microservices. This definitions are part of a spring configuration that is adoptable. If we can assure that every camunda installation has its own keycloak realm and we can operate keycloak, this could be a very good solution. A keycloak realm can offer additional integration features on demand.
 
@@ -26,9 +22,6 @@ In the current setup, elasticsearch is not secured at all (no authentication).
 
 There are Kibana Dashboards for Camunda.
 In a multi-tenant offering we need to have a good naming convention for separating the tenants in a shared elastic search cluster.
-
-elasticsearch is a challenge for K8s: it needs a privileged container for the startup and it has direct pod to pod communication - not so easy for Istio.
-Who is operating elasticsearch at scale???
 
 ### Zeebe
 
@@ -133,6 +126,3 @@ pvc-acd14d75-b0cb-4300-aa86-2c98c0af722d   64Gi       RWO            Delete     
 pvc-c183191c-5153-4d9b-a10d-97a6cfc29634   8Gi        RWO            Delete           Bound    camunda8-dev/data-modeler-db-0                             default                 9d
 pvc-e1d5f423-280c-4679-9fed-ea535c1391ff   64Gi       RWO            Delete           Bound    camunda8-dev/elasticsearch-master-elasticsearch-master-1   default                 9d
 ```
-
-
-
